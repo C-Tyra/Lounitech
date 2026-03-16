@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LouniTech — Électricité & Domotique</title>
+  <style>
+    /* ===========================
+       VARIABLES & RESET
+    =========================== */
+    :root {
+      --peach:        #FDEAE0;
+      --peach-mid:    #F8D5C4;
+      --peach-dark:   #F0C0A8;
+      --rose:         #E8437A;
+      --magenta:      #C9216B;
+      --electric:     #1A6BFF;
+      --electric-dark:#0F4DD6;
+      --dark:         #1A1020;
+      --text:         #2D1B30;
+      --text-light:   #6B4060;
+      --white:        #FFFFFF;
+      --card-bg:      rgba(255,255,255,0.72);
+      --shadow:       0 8px 40px rgba(200,60,100,0.10);
+      --shadow-blue:  0 8px 40px rgba(26,107,255,0.13);
+      --radius:       18px;
+      --radius-sm:    10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--peach);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ===========================
+       TYPOGRAPHY HELPERS
+    =========================== */
+    h1, h2, h3, nav a, .btn {
+      font-family: 'Trebuchet MS', 'Gill Sans', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    /* ===========================
+       NAV
+    =========================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 6vw;
+      background: rgba(253,234,224,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(232,67,122,0.12);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(200,60,100,0.10); }
+    .nav-logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .nav-logo .logo-lt {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--rose), var(--electric));
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: .88rem;
+      font-weight: 600;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--rose), var(--electric));
+      color: #fff !important;
+      padding: 7px 18px;
+      border-radius: 50px;
+      transition: opacity .2s !important;
+    }
+    .nav-cta:hover { opacity: .85; color: #fff !important; }
+
+    /* Burger menu (mobile) */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .burger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    /* ===========================
+       HERO
+    =========================== */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 110px 6vw 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Background decorative blobs */
+    #hero::before, #hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .28;
+      pointer-events: none;
+    }
+    #hero::before {
+      width: 520px; height: 520px;
+      background: var(--rose);
+      top: -80px; right: -100px;
+    }
+    #hero::after {
+      width: 420px; height: 420px;
+      background: var(--electric);
+      bottom: -60px; left: -80px;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(232,67,122,.12), rgba(26,107,255,.12));
+      border: 1px solid rgba(232,67,122,.22);
+      color: var(--rose);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(4px);
+    }
+    .hero-logo {
+      font-size: clamp(3.2rem, 10vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 18px;
+      background: linear-gradient(120deg, var(--text) 0%, var(--rose) 45%, var(--electric) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 16px rgba(232,67,122,0.18));
+    }
+    .hero-slash {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--rose), var(--electric));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: clamp(.9rem, 2.5vw, 1.1rem);
+      color: var(--text-light);
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+    .hero-slogan {
+      font-size: clamp(1.1rem, 3.5vw, 1.55rem);
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+    .hero-slogan strong {
+      font-style: normal;
+      color: var(--rose);
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block;
+      padding: 13px 30px;
+      border-radius: 50px;
+      font-size: .95rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform .2s, box-shadow .2s, opacity .2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--rose), var(--electric));
+      color: #fff;
+      box-shadow: 0 6px 28px rgba(232,67,122,.35);
+    }
+    .btn-primary:hover { box-shadow: 0 10px 36px rgba(232,67,122,.48); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid rgba(45,27,48,.22);
+    }
+    .btn-outline:hover { border-color: var(--rose); color: var(--rose); }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-light);
+      font-size: .75rem;
+      font-family: 'Trebuchet MS', sans-serif;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      animation: fadeInUp 1.2s .8s both;
+    }
+    .scroll-hint svg { animation: bounce 1.6s infinite; }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(5px); }
+    }
+
+    /* ===========================
+       SECTIONS COMMON
+    =========================== */
+    section { padding: 90px 6vw; }
+    .section-label {
+      display: inline-block;
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    .section-lead {
+      font-size: 1.05rem;
+      color: var(--text-light);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+    .divider {
+      width: 56px; height: 4px;
+      background: linear-gradient(90deg, var(--rose), var(--electric));
+      border-radius: 4px;
+      margin-bottom: 18px;
+    }
+
+    /* ===========================
+       SERVICES
+    =========================== */
+    #services { background: var(--peach-mid); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .service-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 34px 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(232,67,122,.10);
+      transition: transform .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--rose), var(--electric));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(200,60,100,.16); }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .icon-dom  { background: linear-gradient(135deg, #FFE0EC, #FFDDE8); }
+    .icon-elec { background: linear-gradient(135deg, #DDE8FF, #D5E0FF); }
+    .icon-it   { background: linear-gradient(135deg, #FDEAE0, #FFDDD0); }
+    .icon-lum  { background: linear-gradient(135deg, #FFF0D5, #FFEDC0); }
+    .service-card h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .service-card p {
+      font-size: .9rem;
+      color: var(--text-light);
+      line-height: 1.65;
+    }
+
+    /* ===========================
+       WHY US
+    =========================== */
+    #why { background: var(--peach); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+    }
+    .why-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 32px 26px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(26,107,255,.09);
+      transition: transform .25s;
+    }
+    .why-card:hover { transform: translateY(-4px); }
+    .why-number {
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(120deg, var(--rose), var(--electric));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .why-card h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .why-card p {
+      font-size: .88rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ===========================
+       DEVIS FORM
+    =========================== */
+    #devis { background: var(--peach-dark); }
+    .form-wrap {
+      max-width: 680px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: clamp(28px, 5vw, 52px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(232,67,122,.10);
+      backdrop-filter: blur(12px);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+    label {
+      display: block;
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 7px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid rgba(45,27,48,.14);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.7);
+      color: var(--text);
+      font-size: .95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(232,67,122,.12);
+      background: #fff;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B4060' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+    }
+    .form-submit {
+      margin-top: 8px;
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+    }
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: var(--rose);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    /* ===========================
+       CONTACT
+    =========================== */
+    #contact {
+      background: var(--dark);
+      color: #fff;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    #contact .section-label { color: var(--peach-mid); }
+    #contact .section-title { color: #fff; }
+    #contact .divider { background: linear-gradient(90deg, var(--rose), var(--electric)); }
+    .contact-info { display: flex; flex-direction: column; gap: 22px; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .contact-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .ci-phone { background: linear-gradient(135deg, rgba(232,67,122,.25), rgba(232,67,122,.05)); border: 1px solid rgba(232,67,122,.3); }
+    .ci-mail  { background: linear-gradient(135deg, rgba(26,107,255,.25), rgba(26,107,255,.05)); border: 1px solid rgba(26,107,255,.3); }
+    .contact-item strong { display: block; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.4); font-family: 'Trebuchet MS', sans-serif; margin-bottom: 3px; }
+    .contact-item a { color: #fff; text-decoration: none; font-size: 1.05rem; font-weight: 600; transition: color .2s; }
+    .contact-item a:hover { color: var(--rose); }
+    .contact-right { text-align: right; }
+    .contact-brand {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      background: linear-gradient(120deg, var(--rose), var(--electric));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .contact-by { font-size: .9rem; color: rgba(255,255,255,.45); font-style: italic; }
+    .contact-siret { font-size: .78rem; color: rgba(255,255,255,.25); margin-top: 16px; letter-spacing: .05em; }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,.06);
+      text-align: center;
+      padding: 18px 6vw;
+      font-size: .75rem;
+      color: rgba(255,255,255,.25);
+      font-family: 'Trebuchet MS', sans-serif;
+    }
+    footer a { color: var(--rose); text-decoration: none; }
+
+    /* ===========================
+       ANIMATIONS
+    =========================== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-badge   { animation: fadeInUp .7s .1s both; }
+    .hero-logo    { animation: fadeInUp .7s .2s both; }
+    .hero-sub     { animation: fadeInUp .7s .3s both; }
+    .hero-slogan  { animation: fadeInUp .7s .4s both; }
+    .hero-actions { animation: fadeInUp .7s .5s both; }
+
+    /* Intersection observer reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .6s, transform .6s;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ===========================
+       RESPONSIVE
+    =========================== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,234,224,.97); backdrop-filter: blur(12px); padding: 20px 6vw; gap: 16px; border-bottom: 1px solid rgba(232,67,122,.12); }
+      .nav-links.open { display: flex; }
+      .burger { display: flex; }
+      #contact { grid-template-columns: 1fr; }
+      .contact-right { text-align: left; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+    }
+    @media (max-width: 500px) {
+      section { padding: 60px 5vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">
+      <span class="logo-lt">LT</span>
+      LouniTech
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#why">Pourquoi nous</a></li>
+      <li><a href="#devis">Devis</a></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero">
+    <div class="hero-inner">
+      <span class="hero-badge">⚡ Électricité &amp; Domotique — Lyon &amp; région</span>
+      <h1 class="hero-logo">Louni<span class="hero-slash">Tech</span></h1>
+      <p class="hero-sub">par Salvien Burki — Artisan certifié</p>
+      <p class="hero-slogan">Votre partenaire pour des<br><strong>installations intelligentes</strong></p>
+      <div class="hero-actions">
+        <a href="#devis" class="btn btn-primary">Demander un devis gratuit</a>
+        <a href="#services" class="btn btn-outline">Découvrir nos services</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Découvrir</span>
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+        <path d="M1 1l7 7 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services">
+    <span class="section-label">Ce que nous faisons</span>
+    <div class="divider"></div>
+    <h2 class="section-title">Nos prestations</h2>
+    <p class="section-lead">De la mise en lumière de votre espace à la maison 100 % connectée, LouniTech intervient sur tous vos projets électriques et numériques.</p>
+
+    <div class="services-grid">
+      <!-- Domotique -->
+      <div class="service-card reveal">
+        <div class="service-icon icon-dom">🏠</div>
+        <h3>Domotique &amp; Maison connectée</h3>
+        <p>Pilotage intelligent de votre habitat : éclairage, volets, chauffage, alarme, assistants vocaux, box domotique. Intégration des protocoles Z-Wave, Zigbee, KNX.</p>
+      </div>
+      <!-- Électricité -->
+      <div class="service-card reveal">
+        <div class="service-icon icon-elec">⚡</div>
+        <h3>Électricité</h3>
+        <p>Installation, mise aux normes NF C 15-100, rénovation de tableau électrique, prises, interrupteurs, câblage, IRVE (borne de recharge véhicule électrique).</p>
+      </div>
+      <!-- IT -->
+      <div class="service-card reveal">
+        <div class="service-icon icon-it">💻</div>
+        <h3>Installation matériel IT</h3>
+        <p>Déploiement réseau (Wi-Fi, fibre, switch), NAS, bornes Wi-Fi, caméras IP, imprimantes, écrans. Configuration et mise en service inclus.</p>
+      </div>
+      <!-- Luminaires & TV -->
+      <div class="service-card reveal">
+        <div class="service-icon icon-lum">💡</div>
+        <h3>Luminaires &amp; TV</h3>
+        <p>Pose de luminaires design ou connectés, installation et fixation murale de téléviseurs, gestion des câbles encastrés, home-cinéma.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WHY US ===== -->
+  <section id="why">
+    <span class="section-label">Nos engagements</span>
+    <div class="divider"></div>
+    <h2 class="section-title">Pourquoi choisir LouniTech ?</h2>
+    <p class="section-lead">Un artisan de proximité, réactif et passionné, à votre service pour chaque projet.</p>
+
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-number">01</span>
+        <h3>Intervention à domicile</h3>
+        <p>Nous nous déplaçons directement chez vous, à Lyon et dans la région Rhône-Alpes. Prise en charge rapide, ponctualité garantie.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-number">02</span>
+        <h3>Artisan de proximité</h3>
+        <p>Salvien Burki est un artisan indépendant, certifié et assujetti à l'assurance décennale. Un interlocuteur unique du devis jusqu'à la réception des travaux.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-number">03</span>
+        <h3>Conseil personnalisé</h3>
+        <p>Chaque projet est unique. Nous prenons le temps d'analyser vos besoins pour vous proposer la solution la plus adaptée et la plus pérenne.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DEVIS FORM ===== -->
+  <section id="devis">
+    <span class="section-label">Gratuit &amp; sans engagement</span>
+    <div class="divider"></div>
+    <h2 class="section-title">Demander un devis</h2>
+    <p class="section-lead">Remplissez le formulaire ci-dessous, nous vous recontactons sous 24 h.</p>
+
+    <div class="form-wrap reveal">
+      <form id="devisForm" novalidate>
+        <div class="form-grid">
+          <!-- Nom -->
+          <div>
+            <label for="nom">Nom complet *</label>
+            <input type="text" id="nom" name="nom" placeholder="Jean Dupont" required />
+          </div>
+          <!-- Email -->
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" placeholder="jean@exemple.fr" required />
+          </div>
+          <!-- Téléphone -->
+          <div>
+            <label for="tel">Téléphone</label>
+            <input type="tel" id="tel" name="tel" placeholder="+33 6 00 00 00 00" />
+          </div>
+          <!-- Prestation -->
+          <div>
+            <label for="prestation">Type de prestation *</label>
+            <select id="prestation" name="prestation" required>
+              <option value="" disabled selected>Choisir…</option>
+              <option value="domotique">Domotique &amp; Maison connectée</option>
+              <option value="electricite">Électricité</option>
+              <option value="it">Installation matériel IT</option>
+              <option value="luminaire">Luminaires &amp; TV</option>
+              <option value="autre">Autre / Multi-prestation</option>
+            </select>
+          </div>
+          <!-- Description -->
+          <div class="full">
+            <label for="description">Description du projet *</label>
+            <textarea id="description" name="description" placeholder="Décrivez votre projet en quelques lignes…" required></textarea>
+          </div>
+          <!-- Date -->
+          <div class="full">
+            <label for="date">Date souhaitée d'intervention</label>
+            <input type="date" id="date" name="date" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Envoyer ma demande →</button>
+      </form>
+      <div class="form-success" id="formSuccess">
+        ✅ Merci ! Votre demande a bien été envoyée. Salvien vous recontacte très prochainement.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact">
+    <div>
+      <span class="section-label">Nous joindre</span>
+      <div class="divider"></div>
+      <h2 class="section-title">Contact direct</h2>
+      <div class="contact-info" style="margin-top:32px;">
+        <div class="contact-item reveal">
+          <div class="contact-icon ci-phone">📞</div>
+          <div>
+            <strong>Téléphone</strong>
+            <a href="tel:+33671993169">+33 6 71 99 31 69</a>
+          </div>
+        </div>
+        <div class="contact-item reveal">
+          <div class="contact-icon ci-mail">✉️</div>
+          <div>
+            <strong>Email</strong>
+            <a href="mailto:contact@lounitech.fr">contact@lounitech.fr</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-right reveal">
+      <p class="contact-brand">LouniTech</p>
+      <p class="contact-by">par Salvien Burki</p>
+      <p style="color:rgba(255,255,255,.45);font-size:.88rem;margin-top:10px;font-style:italic;">Électricité · Domotique · IT · Luminaires</p>
+      <p class="contact-siret">Artisan indépendant — Lyon &amp; région Rhône-Alpes</p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    © 2025 LouniTech — Salvien Burki &nbsp;|&nbsp; <a href="mailto:contact@lounitech.fr">contact@lounitech.fr</a> &nbsp;|&nbsp; <a href="tel:+33671993169">+33 6 71 99 31 69</a>
+  </footer>
+
+  <!-- ===== JS ===== -->
+  <script>
+    /* --- Burger menu --- */
+    const burger = document.getElementById('burger');
+    const navLinks = document.getElementById('navLinks');
+    burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+    /* --- Navbar shadow on scroll --- */
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* --- Intersection Observer reveal --- */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* --- Form: pré-remplir date min = aujourd'hui --- */
+    const dateInput = document.getElementById('date');
+    if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+
+    /* --- Form submission (demo) --- */
+    document.getElementById('devisForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      /* Ici : brancher un endpoint (Formspree, Netlify Forms, etc.) */
+      this.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
